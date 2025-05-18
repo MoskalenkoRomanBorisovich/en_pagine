@@ -51,7 +51,7 @@ func TestBoardState(t *testing.T) {
 				for _, k := range [2]bool{true, false} {
 					for _, q := range [2]bool{true, false} {
 						for _, is_en := range [2]bool{true, false} {
-							for _, en_pos := range [3]PiecePos{MakePiecePos(1, 2), MakePiecePos(7, 0), MakePiecePos(7, 7)} {
+							for _, en_pos := range [3]Position{MakePos(1, 2), MakePos(7, 0), MakePos(7, 7)} {
 								for _, hmove := range [3]uint8{1, 13, 50} {
 									var bs BoardState
 									bs = bs.Set_Turn(is_w)
@@ -101,7 +101,7 @@ func TestBoardStateFEN(t *testing.T) {
 
 	bs = bs.Set_Q(false)
 	bs = bs.Set_IsEnPos(true)
-	bs = bs.Set_EnPos(MakePiecePos(1, 2))
+	bs = bs.Set_EnPos(MakePos(1, 2))
 	fen = bs.FEN()
 	assert_equal(fen, "w Kkq c2 1", t)
 	bs_copy, er = MakeBoardStateFromFEN(fen)

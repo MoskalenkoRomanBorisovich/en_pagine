@@ -11,11 +11,11 @@ func main() {
 		B_Bishop,
 		B_King,
 	}
-	poses := [...]PiecePos{
-		MakePiecePos(0, 0),
-		MakePiecePos(0, 1),
-		MakePiecePos(0, 2),
-		MakePiecePos(6, 0),
+	poses := [...]Position{
+		MakePos(0, 0),
+		MakePos(0, 1),
+		MakePos(0, 2),
+		MakePos(6, 0),
 	}
 	board := MakeEmptyBoard()
 	for i := 0; i < len(pcs); i++ {

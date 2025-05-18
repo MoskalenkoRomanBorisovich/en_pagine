@@ -85,12 +85,12 @@ func (bs BoardState) Get_IsEnPos() bool {
 	return bs&bsIsEnPosMask != 0
 }
 
-func (bs BoardState) Set_EnPos(pos PiecePos) BoardState {
+func (bs BoardState) Set_EnPos(pos Position) BoardState {
 	return (bs &^ bsEnPosMask) | BoardState(pos)<<6
 }
 
-func (bs BoardState) Get_EnPos() PiecePos {
-	return PiecePos(bs & bsEnPosMask >> 6)
+func (bs BoardState) Get_EnPos() Position {
+	return Position(bs & bsEnPosMask >> 6)
 }
 
 func (bs BoardState) Set_HMoves(h_moves uint8) BoardState {
@@ -207,7 +207,7 @@ func (bs BoardState) setCastleFromFen(fen string) (BoardState, error) {
 
 func (bs BoardState) setEnPosFromFen(fen string) (BoardState, error) {
 	if fen == "-" {
-		bs = bs.Set_EnPos(MakePiecePos(0, 0)) // for consistency
+		bs = bs.Set_EnPos(MakePos(0, 0)) // for consistency
 		return bs.Set_IsEnPos(false), nil
 	}
 	bs = bs.Set_IsEnPos(true)

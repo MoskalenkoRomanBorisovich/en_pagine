@@ -6,47 +6,37 @@ import (
 	"strconv"
 )
 
-const BoardSize uint8 = 8
+const BoardSize int8 = 8
 
 type Board [BoardSize * BoardSize]Piece
 
-func MakeEmptyBoard() Board {
-	var board Board
-	for r := uint8(0); r < BoardSize; r-- {
-		for c := uint8(0); c < BoardSize; c-- {
-			i := MakePiecePos(r, c).id()
-			board[i] = NoPiece
-		}
+func CheckBoardPos(r, c int8) bool {
+	if r < 0 || BoardSize <= r || c < 0 || BoardSize <= r {
+		return false
+		// return errors.New("Position outside the board")
 	}
-	return board
+	return true
 }
 
-func CheckBoardPos(p PiecePos) error {
-	if p.GetRow() >= BoardSize || p.GetCol() >= BoardSize {
-		return errors.New("Position outside the board")
-	}
-	return nil
-}
-
-func (board *Board) SetPiece(pos PiecePos, p Piece) {
+func (board *Board) SetPiece(pos Position, p Piece) {
 	board[pos.id()] = p
 }
 
-func (board *Board) CheckedSetPiece(pos PiecePos, p Piece) error {
-	if er := CheckBoardPos(pos); er != nil {
-		return er
+func (board *Board) CheckedSetPiece(pos Position, p Piece) error {
+	if !CheckBoardPos(pos.GetRow(), pos.GetCol()) {
+		return errors.New("Position outside the board")
 	}
 	board.SetPiece(pos, p)
 	return nil
 }
 
-func (board *Board) GetPiece(pos PiecePos) Piece {
+func (board *Board) GetPiece(pos Position) Piece {
 	return board[pos.id()]
 }
 
-func (board *Board) CheckedGetPiece(pos PiecePos) (Piece, error) {
-	if er := CheckBoardPos(pos); er != nil {
-		return NoPiece, er
+func (board *Board) CheckedGetPiece(pos Position) (Piece, error) {
+	if CheckBoardPos(pos.GetRow(), pos.GetCol()) {
+		return NoPiece, errors.New("Position outside the board")
 	}
 	return board.GetPiece(pos), nil
 }
@@ -63,7 +53,7 @@ func (board *Board) FEN() (string, error) {
 			}
 		}
 		for c := 0; c < int(BoardSize); c++ {
-			p := board.GetPiece(MakePiecePos(r, c))
+			p := board.GetPiece(MakePos(r, c))
 			if p == NoPiece {
 				empty_count++
 				continue
@@ -100,7 +90,7 @@ func MakeBoardFromFEN(fen string) (Board, error) {
 
 		if n_spaces := int(s) - '0'; 0 < n_spaces && n_spaces < 10 {
 			for i := 0; i < n_spaces; i++ {
-				er := res.CheckedSetPiece(MakePiecePos(r, c), NoPiece)
+				er := res.CheckedSetPiece(MakePos(r, c), NoPiece)
 				if er != nil {
 					return res, er
 				}
@@ -113,7 +103,7 @@ func MakeBoardFromFEN(fen string) (Board, error) {
 		if er != nil {
 			return res, er
 		}
-		res.CheckedSetPiece(MakePiecePos(r, c), p)
+		res.CheckedSetPiece(MakePos(r, c), p)
 		c++
 	}
 
@@ -122,37 +112,45 @@ func MakeBoardFromFEN(fen string) (Board, error) {
 
 func MakeInitialBoard() Board {
 	var board Board
-	board.SetPiece(MakePiecePos(0, 0), W_Rook)
-	board.SetPiece(MakePiecePos(0, 7), W_Rook)
+	board.SetPiece(MakePos(0, 0), W_Rook)
+	board.SetPiece(MakePos(0, 7), W_Rook)
 
-	board.SetPiece(MakePiecePos(0, 1), W_Knight)
-	board.SetPiece(MakePiecePos(0, 6), W_Knight)
+	board.SetPiece(MakePos(0, 1), W_Knight)
+	board.SetPiece(MakePos(0, 6), W_Knight)
 
-	board.SetPiece(MakePiecePos(0, 2), W_Bishop)
-	board.SetPiece(MakePiecePos(0, 5), W_Bishop)
+	board.SetPiece(MakePos(0, 2), W_Bishop)
+	board.SetPiece(MakePos(0, 5), W_Bishop)
 
-	board.SetPiece(MakePiecePos(0, 3), W_Queen)
-	board.SetPiece(MakePiecePos(0, 4), W_King)
+	board.SetPiece(MakePos(0, 3), W_Queen)
+	board.SetPiece(MakePos(0, 4), W_King)
 
 	for c := 0; c < 8; c++ {
-		board.SetPiece(MakePiecePos(1, c), W_Pawn)
+		board.SetPiece(MakePos(1, c), W_Pawn)
 	}
 
-	board.SetPiece(MakePiecePos(7, 0), B_Rook)
-	board.SetPiece(MakePiecePos(7, 7), B_Rook)
+	board.SetPiece(MakePos(7, 0), B_Rook)
+	board.SetPiece(MakePos(7, 7), B_Rook)
 
-	board.SetPiece(MakePiecePos(7, 1), B_Knight)
-	board.SetPiece(MakePiecePos(7, 6), B_Knight)
+	board.SetPiece(MakePos(7, 1), B_Knight)
+	board.SetPiece(MakePos(7, 6), B_Knight)
 
-	board.SetPiece(MakePiecePos(7, 2), B_Bishop)
-	board.SetPiece(MakePiecePos(7, 5), B_Bishop)
+	board.SetPiece(MakePos(7, 2), B_Bishop)
+	board.SetPiece(MakePos(7, 5), B_Bishop)
 
-	board.SetPiece(MakePiecePos(7, 3), B_Queen)
-	board.SetPiece(MakePiecePos(7, 4), B_King)
+	board.SetPiece(MakePos(7, 3), B_Queen)
+	board.SetPiece(MakePos(7, 4), B_King)
 
 	for c := 0; c < 8; c++ {
-		board.SetPiece(MakePiecePos(6, c), B_Pawn)
+		board.SetPiece(MakePos(6, c), B_Pawn)
 	}
 
 	return board
+}
+
+func MakeEmptyBoard() Board {
+	var res Board
+	for i := 0; i < int(BoardSize)*int(BoardSize); i++ {
+		res[i] = NoPiece
+	}
+	return res
 }

@@ -5,13 +5,13 @@ import "fmt"
 type Piece byte
 
 const (
-	NoPiece Piece = iota
-	Pawn
-	Knight
-	Bishop
-	Rook
-	Queen
-	King
+	NoPiece Piece = 0
+	Pawn    Piece = 1
+	Knight  Piece = 2
+	Bishop  Piece = 3
+	Rook    Piece = 4
+	Queen   Piece = 5
+	King    Piece = 6
 
 	White Piece = 8
 
@@ -22,12 +22,12 @@ const (
 	B_Queen  = Queen
 	B_King   = King
 
-	W_Pawn   = Pawn + White
-	W_Knight = Knight + White
-	W_Bishop = Bishop + White
-	W_Rook   = Rook + White
-	W_Queen  = Queen + White
-	W_King   = King + White
+	W_Pawn   = Pawn | White
+	W_Knight = Knight | White
+	W_Bishop = Bishop | White
+	W_Rook   = Rook | White
+	W_Queen  = Queen | White
+	W_King   = King | White
 )
 
 type pieceLiteral struct {
